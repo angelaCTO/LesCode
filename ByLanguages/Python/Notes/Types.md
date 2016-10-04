@@ -45,7 +45,7 @@
 
 
 
-#BUILT-IN SEQUENCE TYPES
+##BUILT-IN SEQUENCE TYPES
 ---
 Sequence Types are defined to have the following properties:
   - **Membership Operator**
@@ -81,6 +81,7 @@ points to. Thus, the need to understand *Deep Copying*:
 
 
 ###DEEP COPYING
+---
   - **Deep Copies** duplicate everything. 
     - A deep copy of a collection is two collections with all of the elements in the original collection duplicated.
   - **Shallow Copies** duplicate as little as possible. 
@@ -92,6 +93,7 @@ points to. Thus, the need to understand *Deep Copying*:
 
 
 ###SLICING
+---
   - *indexing non-inclusive*
   - seq[start:]
   - seq[:end]
@@ -101,6 +103,7 @@ points to. Thus, the need to understand *Deep Copying*:
   
 
 ###STRINGS
+---
   - **UNICODE**
     - Unicode encoding to include special characters in strings
     - From Python 3+, all strings are unicode, not just plain bytes
@@ -143,6 +146,7 @@ rences of string substr replaced with string substr'*
       
 
 ###TUPLES
+---
   - Immutable sequence type, seperated by commas
   - Where strings have a character at every position, tuples have an object reference at each position. For this reason, it is possible to create tuples that contain mutable objects, such as lists.
     - tl = ([1, 2, 3], [0,9,8])
@@ -180,10 +184,9 @@ rences of string substr replaced with string substr'*
           - 'student'
         - >>> kid.age
           - '22'
-          
-          
-          
-###LISTS 
+                    
+###LISTS
+---
   - 0(1): **append()**, **pop()**
   - O(n): **remove()**, **index()**, ***in***
 
@@ -241,6 +244,7 @@ rences of string substr replaced with string substr'*
      
             
 ###BYTES / BYTE ARRAYS
+---
   - Python provides two data types for handling raw bytes: 
     - **bytes** which is *immutable*, and **bytearray**, which is *mutable* 
     - Both types hold a sequence of zero or more unsigned 8-bits integers in the range 0 ... 255. The byte type is very similar to the string type and the bytearray provides mutating methods similar to lists.
