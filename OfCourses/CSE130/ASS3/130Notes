@@ -1,0 +1,69 @@
+fun x -> x ;;	Returns: 'a -> 'a = <fun>
+let f x = x ;;  Returns: val f : 'a -> 'a = <fun>
+
+
+we want to implement pipe such that passing in a list of functions returns another function f such that for any x, the returned function f(x) returns the value given by f3(f2(f1(x)))
+
+let pipe fs = 
+	let f a x = fun x -> x a in
+	let base  = fun x -> x in
+	List.fold_left f base fs ;; 
+
+let pipe fs = 
+	let f (a x) = in
+	let base    = x in
+	List.fold_left f (base fs) ;; 
+
+pipe([f1, f2, f3]) => f(x) => f3(f2(f1(x)))
+
+f: function	: ?
+a: base		: x
+x: fs		: [f1(x), f2(x), f3(x)]
+
+I need to write a function that will transform this [f1(x), f2(x), f3(x)] into this f3(f2(f1(x)))
+How?
+
+leftfold f x [f1, f2, f3] =>  f(f(f(x,f1), f2), f3)
+
+I need a function that takes in two arguments x, and f1 and stuffs x into f1 as f1(x) rather
+f takes this f(x, f1) .. I want f to do this f1(x)				
+
+let f x [f1, f2, f3]
+
+f x f1 -> func x' -> f1 x' 
+
+
+let pipe fs = 
+	let f a x = func x -> in
+	let base    = x in
+	List.fold_left f (base fs) ;; 
+    f x f1
+let f a x 
+let f (x, neg()) = func new_func(x) -> neg(x);
+		 = func x -> x a;   
+
+
+(This does not work)
+let pipe fs = 
+	let f a x = fun x -> x a in
+	let base  = x in
+	List.fold_left f base fs ;; 
+
+
+
+
+
+(This does not work)
+let pipe fs = 
+	let f a x = fun x -> x a in
+	let base  = fun x -> x in
+	List.fold_left f base fs ;; 
+
+Error: This expression has type 'a -> 'b -> ('a -> 'c) -> 'c
+       but an expression was expected of type 'a -> 'b -> 'a
+       The type variable 'a occurs inside ('a -> 'c) -> 'c
+
+
+
+
+

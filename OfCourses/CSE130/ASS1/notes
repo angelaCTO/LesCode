@@ -1,0 +1,7 @@
+match	like a switch case statement
+rec	specifies that the function is recursive
+[]	"empty list"
+->	"return"
+
+to print something: Printf.printf "%d" some_integer
+
