@@ -48,7 +48,7 @@ class Stack(object):
     def peek(self):
         if self.content:
             return self.content[-1]
-        else
+        else:
             return 'Emty Stack'
 
     
